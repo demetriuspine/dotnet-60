@@ -11,4 +11,9 @@ app.MapGet("/say-hello/{name}", (string name) =>
     return Results.Ok($"Hello {name}");
 });
 
+app.MapPost("/", (UserExample user) => // o asp.net ja faz a serialização e deserialização do json enviado pelo body ...
+{
+    return Results.Ok(user); //e do objeto enviado
+});
+
 app.Run();

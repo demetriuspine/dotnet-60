@@ -1,6 +1,9 @@
+using MyApi.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers(); // adiciona suporte a controllers
+builder.Services.AddDbContext<AppDbContext>(); // adiciona contexto, aspnet gerencia criação e destruição da conexão, sem precisar o using
 
 var app = builder.Build();
 

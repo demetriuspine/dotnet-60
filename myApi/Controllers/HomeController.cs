@@ -19,7 +19,7 @@ namespace MyApi.Controllers
 
         [HttpPost]
         [Route("")]
-        public TodoModel? Post([FromServices] AppDbContext ctx, TodoModel todo)
+        public TodoModel? Post([FromServices] AppDbContext ctx, [FromBody] TodoModel todo)
         {
             todo.CreatedAt = DateTime.Now;
             ctx.Todos.Add(todo);

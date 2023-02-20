@@ -10,42 +10,53 @@ namespace MyApi.Controllers
     {
         [HttpGet]
         [Route("")] // mesma coisa que [HttpGet("/")], caso o prefixo de rota esteja em uso, não pode usar o /
-        public List<TodoModel> Get([FromServices] AppDbContext ctx) // também chamada de Action
+        public IActionResult Get([FromServices] AppDbContext ctx) // também chamada de Action
         {
-            var todoList = ctx.Todos.ToList();
+            var todoList = Ok(ctx.Todos.ToList());
 
             return todoList;
         }
 
         [HttpGet]
         [Route("{id:int}")] // http://localhost:5236/v1/2
-        public TodoModel? GetById([FromServices] AppDbContext ctx, [FromRoute] int id) // também chamada de Action
+        public IActionResult GetById([FromServices] AppDbContext ctx, [FromRoute] int id) // também chamada de Action
         {
             var todo = ctx.Todos.FirstOrDefault(x => x.Id == id);
 
-            return todo;
+            if (todo == null)
+            {
+                return NotFound();
+            }
+            return Ok(todo);
         }
 
         [HttpPost]
         [Route("")]
-        public TodoModel? Post([FromServices] AppDbContext ctx, [FromBody] TodoModel todo)
+        public IActionResult Post([FromServices] AppDbContext ctx, [FromBody] TodoModel todo)
         {
             ctx.Todos.Add(todo);
 
             ctx.SaveChanges();
 
-            return ctx.Todos.FirstOrDefault(x => x.Id == todo.Id);
+            var createdTodo = ctx.Todos.FirstOrDefault(x => x.Id == todo.Id);
+
+            if (createdTodo == null)
+            {
+                return BadRequest();
+            }
+
+            return Created($"{createdTodo.Id}", createdTodo);
         }
 
         [HttpPut]
         [Route("{id:int}")]
-        public TodoModel? Put([FromServices] AppDbContext ctx, [FromBody] TodoModel todo, [FromRoute] int id)
+        public ActionResult Put([FromServices] AppDbContext ctx, [FromBody] TodoModel todo, [FromRoute] int id)
         {
             var model = ctx.Todos.FirstOrDefault(x => x.Id == id);
 
             if (model == null)
             {
-                return null;
+                return NotFound();
             }
 
             model.Title = todo.Title;
@@ -55,24 +66,24 @@ namespace MyApi.Controllers
 
             ctx.SaveChanges();
 
-            return model;
+            return Ok(model);
         }
 
         [HttpDelete]
         [Route("{id:int}")]
-        public TodoModel? Delete([FromServices] AppDbContext ctx, [FromRoute] int id)
+        public IActionResult Delete([FromServices] AppDbContext ctx, [FromRoute] int id)
         {
             var model = ctx.Todos.FirstOrDefault(x => x.Id == id);
 
             if (model == null)
             {
-                return null;
+                return NotFound();
             }
 
             ctx.Todos.Remove(model);
             ctx.SaveChanges();
 
-            return model;
+            return Ok(model);
         }
     }
 }

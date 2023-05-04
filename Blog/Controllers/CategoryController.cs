@@ -47,6 +47,10 @@ namespace Blog.Controllers
             [FromServices] BlogDataContext ctx,
             [FromBody] EditorCategoryViewModel model)
         {
+            if (!ModelState.IsValid) // por padrão o ASP.NET já faz isso
+            {
+                return BadRequest("Fields are required");
+            }
             try
             {
                 var category = new Category

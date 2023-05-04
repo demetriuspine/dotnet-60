@@ -30,11 +30,24 @@ namespace Blog.Controllers
         [HttpPost("categories")] //localhost:PORT/v1/categories
         public async Task<IActionResult> PostAsync([FromServices] BlogDataContext ctx, [FromBody] Category model)
         {
-            await ctx.Categories.AddAsync(model);
+            try
+            {
+                await ctx.Categories.AddAsync(model);
 
-            await ctx.SaveChangesAsync();
+                await ctx.SaveChangesAsync();
 
-            return Created($"v1/categories/{model.Id}", model);
+                return Created($"v1/categories/{model.Id}", model);
+            } 
+            catch (DbUpdateException e)
+            {
+                return BadRequest(e.Message);
+            } 
+            
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+
         }
 
         [HttpPut("categories/{id:int}")] //localhost:PORT/v1/categories/1

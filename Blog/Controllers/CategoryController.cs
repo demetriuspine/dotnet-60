@@ -12,19 +12,33 @@ namespace Blog.Controllers
         [HttpGet("categories")] //localhost:PORT/v1/categories
         public async Task<IActionResult> GetAsync([FromServices]BlogDataContext ctx)
         {
-            var categories = await ctx.Categories.ToListAsync();
-            return Ok(categories);
+            try
+            {
+                var categories = await ctx.Categories.ToListAsync();
+                return Ok(categories);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         [HttpGet("categories/{id:int}")] //localhost:PORT/v1/categories/1
         public async Task<IActionResult> GetByIdAsync([FromServices] BlogDataContext ctx, [FromRoute] int id)
         {
-            var category = await ctx.Categories.FirstOrDefaultAsync(x=>x.Id == id);
+            try
+            {
+                var category = await ctx.Categories.FirstOrDefaultAsync(x=>x.Id == id);
 
-            if (category == null)
-                return NotFound();
+                if (category == null)
+                    return NotFound();
 
-            return Ok(category);
+                return Ok(category);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         [HttpPost("categories")] //localhost:PORT/v1/categories
@@ -45,7 +59,7 @@ namespace Blog.Controllers
             
             catch (Exception e)
             {
-                return BadRequest(e);
+                return BadRequest(e.Message);
             }
 
         }
@@ -53,34 +67,48 @@ namespace Blog.Controllers
         [HttpPut("categories/{id:int}")] //localhost:PORT/v1/categories/1
         public async Task<IActionResult> PutAsync([FromServices] BlogDataContext ctx, [FromRoute] int id, [FromBody] Category model)
         {
-            var category = await ctx.Categories.FirstOrDefaultAsync(x => x.Id == id);
+            try
+            {
+                var category = await ctx.Categories.FirstOrDefaultAsync(x => x.Id == id);
 
-            if (category == null)
-                return NotFound();
+                if (category == null)
+                    return NotFound();
 
-            category.Name = model.Name;
-            category.Slug = model.Slug;
+                category.Name = model.Name;
+                category.Slug = model.Slug;
 
-            ctx.Categories.Update(category);
+                ctx.Categories.Update(category);
 
-            await ctx.SaveChangesAsync();
+                await ctx.SaveChangesAsync();
 
-            return Ok(model);
+                return Ok(model);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         [HttpDelete("categories/{id:int}")] //localhost:PORT/v1/categories/1
         public async Task<IActionResult> DeleteAsync([FromServices] BlogDataContext ctx, [FromRoute] int id)
         {
-            var category = await ctx.Categories.FirstOrDefaultAsync(x => x.Id == id);
+            try
+            {
+                var category = await ctx.Categories.FirstOrDefaultAsync(x => x.Id == id);
 
-            if (category == null)
-                return NotFound();
+                if (category == null)
+                    return NotFound();
 
-            ctx.Categories.Remove(category);
+                ctx.Categories.Remove(category);
 
-            await ctx.SaveChangesAsync();
+                await ctx.SaveChangesAsync();
 
-            return Ok(category);
+                return Ok(category);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
     }

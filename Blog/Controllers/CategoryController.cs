@@ -91,7 +91,7 @@ namespace Blog.Controllers
                 var category = await ctx.Categories.FirstOrDefaultAsync(x => x.Id == id);
 
                 if (category == null)
-                    return NotFound();
+                    return NotFound(new ResultViewModel<string>("Category not found"));
 
                 category.Name = model.Name;
                 category.Slug = model.Slug;
@@ -100,7 +100,8 @@ namespace Blog.Controllers
 
                 await ctx.SaveChangesAsync();
 
-                return Ok(model);
+                //return Ok(new ResultViewModel<EditorCategoryViewModel>(model));
+                return Ok(new ResultViewModel<Category>(category));
             }
             catch (Exception e)
             {
@@ -116,17 +117,17 @@ namespace Blog.Controllers
                 var category = await ctx.Categories.FirstOrDefaultAsync(x => x.Id == id);
 
                 if (category == null)
-                    return NotFound();
+                    return NotFound(new ResultViewModel<string>("Category not found"));
 
                 ctx.Categories.Remove(category);
 
                 await ctx.SaveChangesAsync();
 
-                return Ok(category);
+                return Ok(new ResultViewModel<Category>(category));
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(new ResultViewModel<string>(e.Message));
             }
         }
 

@@ -49,7 +49,7 @@ namespace Blog.Controllers
         {
             if (!ModelState.IsValid) // por padrão o ASP.NET já faz isso
             {
-                return BadRequest("Fields are required");
+                return BadRequest(ModelState.Values.FirstOrDefault()!.Errors); // desse jeito, me retorna uma lista de de objetos, mas eu preciso de uma lista de strings
             }
             try
             {

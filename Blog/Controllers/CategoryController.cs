@@ -16,11 +16,11 @@ namespace Blog.Controllers
             try
             {
                 var categories = await ctx.Categories.ToListAsync();
-                return Ok(categories);
+                return Ok(new ResultViewModel<List<Category>>(categories));
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(new ResultViewModel<string>(e.Message));
             }
         }
 
@@ -32,13 +32,13 @@ namespace Blog.Controllers
                 var category = await ctx.Categories.FirstOrDefaultAsync(x=>x.Id == id);
 
                 if (category == null)
-                    return NotFound();
+                    return NotFound(new ResultViewModel<string>("Category not found"));
 
-                return Ok(category);
+                return Ok(new ResultViewModel<Category>(category));
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(new ResultViewModel<string>(e.Message));
             }
         }
 

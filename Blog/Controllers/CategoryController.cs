@@ -1,4 +1,5 @@
 ﻿using Blog.Data;
+using Blog.Extensions;
 using Blog.Models;
 using Blog.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -49,7 +50,8 @@ namespace Blog.Controllers
         {
             if (!ModelState.IsValid) // por padrão o ASP.NET já faz isso
             {
-                return BadRequest(ModelState.Values.FirstOrDefault()!.Errors); // desse jeito, me retorna uma lista de de objetos, mas eu preciso de uma lista de strings
+                //return BadRequest(ModelState.Values.FirstOrDefault()!.Errors); // desse jeito, me retorna uma lista de de objetos, mas eu preciso de uma lista de strings
+                return BadRequest(new ResultViewModel<List<string>>(ModelState.GetErrors()));
             }
             try
             {
@@ -64,16 +66,16 @@ namespace Blog.Controllers
 
                 await ctx.SaveChangesAsync();
 
-                return Created($"v1/categories/{category.Id}", category);
+                return Created($"v1/categories/{category.Id}", new ResultViewModel<Category>(category));
             } 
             catch (DbUpdateException e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(new ResultViewModel<string>(e.Message));
             } 
             
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                return StatusCode(500, new ResultViewModel<string>(e.Message));
             }
 
         }
